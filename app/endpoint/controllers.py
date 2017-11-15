@@ -55,9 +55,15 @@ def callApi(url, type, parameters, isJson=False):
         response = requests.delete(url)
     else:
         raise Exception("unsupported request method.")
+    print(response)
+    print(response.headers)
     result = json.loads(response.text)
-    print(result)
-    return result
+    outType = "text"
+    if "Content-Type" in response.headers.keys():
+        if response.headers["Content-Type"] == "application/json":
+            outType = "json"
+
+    return (outType, result)
 
 
 # Request Handler
@@ -149,18 +155,23 @@ def api():
                                     story.apiDetails.jsonData, undefined=SilentUndefined)
                                 parameters = requestTemplate.render(**context)
 
-                            result = callApi(renderedUrl,
+                            out_type, result = callApi(renderedUrl,
                                              story.apiDetails.requestType,
                                              parameters, isJson)
 
                         else:
                             result = {}
+                            out_type = "text"
 
-                        context["result"] = result
-                        resultTemplate = Template(
-                            story.speechResponse, undefined=SilentUndefined)
-                        resultJson["speechResponse"] = resultTemplate.render(
+                        if out_type == "text":
+                            context["result"] = result
+                            resultTemplate = Template(
+                                story.speechResponse, undefined=SilentUndefined)
+                            resultJson["speechResponse"] = resultTemplate.render(
                             **context)
+                        else:
+                            resultJson["speechResponse"] = None
+                            resultJson["jsonResponse"] = result
                     except Exception as e:
                         print(e)
                         resultJson["speechResponse"] = "Service is not available."
@@ -199,18 +210,25 @@ def api():
                                     story.apiDetails.jsonData, undefined=SilentUndefined)
                                 parameters = requestTemplate.render(**context)
 
-                            result = callApi(renderedUrl,
+                            out_type, result = callApi(renderedUrl,
                                              story.apiDetails.requestType,
                                              parameters, isJson)
                             print(result)
                         else:
                             result = {}
+                            out_type = "text"
+
                         context["result"] = result
 
-                        template = Template(
-                            story.speechResponse, undefined=SilentUndefined)
-                        resultJson["speechResponse"] = template.render(
-                            **context)
+                        if out_type == "text":
+                            template = Template(
+                                story.speechResponse, undefined=SilentUndefined)
+                            resultJson["speechResponse"] = template.render(
+                                **context)
+                        else:
+                            resultJson["speechResponse"] = None
+                            resultJson["jsonResponse"] = result
+
                     except Exception as e:
                         print(e)
                         resultJson["speechResponse"] = "Service is not available. "
