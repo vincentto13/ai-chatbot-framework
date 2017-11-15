@@ -165,10 +165,12 @@ def api():
                             context["result"] = result
                             resultTemplate = Template(
                                 story.speechResponse, undefined=SilentUndefined)
-                            resultJson["speechResponse"] = resultTemplate.render(
-                            **context)
+                            resultJson["speechResponse"] = resultTemplate.render(**context)
+                            resultJson["jsonResponse"] = None
                         else:
-                            resultJson["speechResponse"] = None
+                            resultTemplate = Template(
+                                story.speechResponse, undefined=SilentUndefined)
+                            resultJson["speechResponse"] = resultTemplate.render(**context)
                             resultJson["jsonResponse"] = result
                     except Exception as e:
                         print(e)
@@ -222,8 +224,11 @@ def api():
                                 story.speechResponse, undefined=SilentUndefined)
                             resultJson["speechResponse"] = template.render(
                                 **context)
+                            resultJson["jsonResponse"] = None
                         else:
-                            resultJson["speechResponse"] = None
+                            resultTemplate = Template(
+                                story.speechResponse, undefined=SilentUndefined)
+                            resultJson["speechResponse"] = resultTemplate.render(**context)
                             resultJson["jsonResponse"] = result
 
                     except Exception as e:
