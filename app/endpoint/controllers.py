@@ -55,8 +55,6 @@ def callApi(url, type, parameters, isJson=False):
         response = requests.delete(url)
     else:
         raise Exception("unsupported request method.")
-    print(response)
-    print(response.headers)
     result = json.loads(response.text)
     outType = "text"
     if "Content-Type" in response.headers.keys():
@@ -213,7 +211,6 @@ def api():
                             out_type, result = callApi(renderedUrl,
                                              story.apiDetails.requestType,
                                              parameters, isJson)
-                            print(result)
                         else:
                             result = {}
                             out_type = "text"
