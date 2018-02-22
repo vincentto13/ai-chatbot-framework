@@ -161,6 +161,8 @@ def api():
                             result = {}
                             out_type = "text"
 
+                        context["result"] = result
+
                         if out_type == "text":
                             context["result"] = result
                             resultTemplate = Template(
