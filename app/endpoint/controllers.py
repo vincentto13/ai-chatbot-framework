@@ -100,6 +100,8 @@ def api():
         else:
             parameters = []
 
+        context["chatbot_input"] = requestJson.get("input")
+
         if ((requestJson.get("complete") is None) or (
                 requestJson.get("complete") is True)):
             resultJson["intent"] = {
@@ -198,6 +200,7 @@ def api():
                     context = {}
                     context["parameters"] = resultJson["extractedParameters"]
                     context["context"] = requestJson["context"]
+                    context["chatbot_input"] = requestJson.get("input")
                     try:
                         if story.apiTrigger:
                             isJson = False
