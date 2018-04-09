@@ -31,8 +31,8 @@ class SilentUndefined(Undefined):
 endpoint = Blueprint('api', __name__, url_prefix='/api')
 
 
-def callApi(url, type, parameters, isJson=False):
-    print(url, type, parameters, isJson)
+def callApi(url, type, parameters, isJson=False, uuid=None):
+    print(url, type, parameters, isJson, uuid)
 
     if "GET" in type:
         if isJson:
@@ -40,7 +40,10 @@ def callApi(url, type, parameters, isJson=False):
             response = requests.get(url, json=json.loads(parameters))
 
         else:
-            response = requests.get(url, params=parameters)
+            if uuid:
+                response = requests.get(url, params=parameters, json=json.loads(uuid))
+            else:
+                response = requests.get(url, params=parameters)
     elif "POST" in type:
         if isJson:
             response = requests.post(url, json=json.loads(parameters))
@@ -155,9 +158,15 @@ def api():
                                     story.apiDetails.jsonData, undefined=SilentUndefined)
                                 parameters = requestTemplate.render(**context)
 
-                            out_type, result = callApi(renderedUrl,
-                                             story.apiDetails.requestType,
-                                             parameters, isJson)
+                            if resultJson["uuid"]:
+                                uuid = {"uuid": resultJson["uuid"]}
+                                out_type, result = callApi(renderedUrl,
+                                                 story.apiDetails.requestType,
+                                                 parameters, isJson, uuid)
+                            else:
+                                out_type, result = callApi(renderedUrl,
+                                                 story.apiDetails.requestType,
+                                                 parameters, isJson)
 
                         else:
                             result = {}
@@ -215,9 +224,16 @@ def api():
                                     story.apiDetails.jsonData, undefined=SilentUndefined)
                                 parameters = requestTemplate.render(**context)
 
-                            out_type, result = callApi(renderedUrl,
-                                             story.apiDetails.requestType,
-                                             parameters, isJson)
+                            if resultJson["uuid"]:
+                                uuid = {"uuid": resultJson["uuid"]}
+                                out_type, result = callApi(renderedUrl,
+                                                 story.apiDetails.requestType,
+                                                 parameters, isJson, uuid)
+                            else:
+                                out_type, result = callApi(renderedUrl,
+                                                 story.apiDetails.requestType,
+                                                 parameters, isJson)
+
                         else:
                             result = {}
                             out_type = "text"
