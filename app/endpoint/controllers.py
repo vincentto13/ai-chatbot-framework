@@ -41,7 +41,7 @@ def callApi(url, type, parameters, isJson=False, uuid=None):
 
         else:
             if uuid:
-                response = requests.get(url, params=parameters, json=json.dumps(uuid))
+                response = requests.get(url, params=parameters, headers=uuid)
             else:
                 response = requests.get(url, params=parameters)
     elif "POST" in type:
